@@ -26,7 +26,7 @@ export default async function BarangDashboard() {
   let userDetail;
   try {
     userDetail = JSON.parse(userDetailStr.value);
-    const response = await axios.get(`http://localhost:3100/user/${userDetail.email}`, {
+    const response = await axios.get(`https://cs-sbd-modul10-backend.vercel.app/user/${userDetail.email}`, {
       headers: { Authorization: `Bearer ${sessionKey.value}` },
     });
     if (response.status !== 200) redirect("/login");
@@ -37,7 +37,7 @@ export default async function BarangDashboard() {
   // Mengambil data barang
   let items: Item[] = [];
   try {
-    const response = await axios.get("http://localhost:3100/items");
+    const response = await axios.get("https://cs-sbd-modul10-backend.vercel.app/items");
     items = response.data.payload || []; // Menyesuaikan dengan format response yang umum dari backend kita
   } catch (err) {
     console.error("Gagal mengambil data barang", err);

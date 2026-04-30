@@ -20,7 +20,7 @@ export default function RegisterForm() {
     setError(null);
 
     try {
-      await axios.post("http://localhost:3100/user/register", { name, username, email, phone, password });
+      await axios.post("https://cs-sbd-modul10-backend.vercel.app/user/register", { name, username, email, phone, password });
 
       // If success, go to login
       router.push("/login");

@@ -15,7 +15,7 @@ export default async function Login() {
     try {
       const userDetail = JSON.parse(userDetailStr.value);
       if (userDetail.email) {
-        const response = await axios.get(`http://localhost:3100/user/${userDetail.email}`, {
+        const response = await axios.get(`https://cs-sbd-modul10-backend.vercel.app/user/${userDetail.email}`, {
           headers: {
             Authorization: `Bearer ${sessionKey.value}`,
           },

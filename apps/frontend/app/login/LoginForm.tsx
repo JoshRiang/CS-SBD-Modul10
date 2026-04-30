@@ -18,7 +18,7 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const response = await axios.post("http://localhost:3100/auth/login", { email, password });
+      const response = await axios.post("https://cs-sbd-modul10-backend.vercel.app/auth/login", { email, password });
 
       // Action to set cookies on the server
       await setLoginSession(response.data.payload.token, JSON.stringify(response.data.payload.user));
