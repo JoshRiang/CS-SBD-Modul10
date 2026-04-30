@@ -1,5 +1,4 @@
-const UserService = require('../services/user.service');
-const { redis, getUserCacheKey } = require('../database/redis');
+const UserService = require("../services/user.service");
 
 class UserController {
   static async register(req, res, next) {
@@ -8,7 +7,7 @@ class UserController {
       const user = await UserService.register({ name, username, email, phone, password });
       res.status(201).json({
         success: true,
-        message: 'User registered successfully',
+        message: "User registered successfully",
         payload: user,
       });
     } catch (error) {
@@ -22,7 +21,7 @@ class UserController {
       const result = await UserService.login(email, password);
       res.status(200).json({
         success: true,
-        message: 'Login successful',
+        message: "Login successful",
         payload: result.user,
       });
     } catch (error) {
@@ -36,7 +35,7 @@ class UserController {
       const updatedUser = await UserService.updateProfile(id, { name, username, email, phone, password, balance });
       res.status(200).json({
         success: true,
-        message: 'User updated successfully',
+        message: "User updated successfully",
         payload: updatedUser,
       });
     } catch (error) {
@@ -51,7 +50,7 @@ class UserController {
       const history = await UserService.getTransactionHistory(userId);
       res.status(200).json({
         success: true,
-        message: 'Transaction history retrieved',
+        message: "Transaction history retrieved",
         payload: history,
       });
     } catch (error) {
@@ -65,7 +64,7 @@ class UserController {
       const totalSpent = await UserService.getTotalSpent(userId);
       res.status(200).json({
         success: true,
-        message: 'Total spent retrieved',
+        message: "Total spent retrieved",
         payload: { total_spent: totalSpent },
       });
     } catch (error) {
@@ -76,23 +75,10 @@ class UserController {
   static async getUserByEmail(req, res, next) {
     try {
       const { email } = req.params;
-      const cacheKey = getUserCacheKey(email);
-      const cachedUser = await redis.get(cacheKey);
-
-      if (cachedUser) {
-        return res.status(200).json({
-          success: true,
-          message: 'User retrieved (cache hit)',
-          payload: JSON.parse(cachedUser),
-        });
-      }
-
       const user = await UserService.getUserByEmail(email);
-      await redis.set(cacheKey, JSON.stringify(user), 'EX', 60);
-
       res.status(200).json({
         success: true,
-        message: 'User retrieved (cache miss)',
+        message: "User retrieved successfully",
         payload: user,
       });
     } catch (error) {
