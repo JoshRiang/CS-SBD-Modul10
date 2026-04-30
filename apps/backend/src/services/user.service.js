@@ -1,7 +1,6 @@
-const User = require('../models/user.model');
-const { AppError } = require('../middleware/errorHandler');
-const bcrypt = require('bcrypt');
-const { redis, getUserCacheKey } = require('../database/redis');
+const User = require("../models/user.model");
+const { AppError } = require("../middleware/errorHandler");
+const bcrypt = require("bcrypt");
 
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 
@@ -10,7 +9,7 @@ class UserService {
     // Check if user already exists by email
     const existingUserByEmail = await User.findByEmail(email);
     if (existingUserByEmail) {
-      throw new AppError('User with this email already exists', 400);
+      throw new AppError("User with this email already exists", 400);
     }
     // Note: username uniqueness is enforced by database constraint
 
@@ -30,16 +29,16 @@ class UserService {
   static async login(email, password) {
     const user = await User.findByEmail(email);
     if (!user) {
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError("Invalid email or password", 401);
     }
 
-    if (typeof user.password !== 'string' || !user.password.startsWith('$2')) {
-      throw new AppError('Invalid email or password', 401);
+    if (typeof user.password !== "string" || !user.password.startsWith("$2")) {
+      throw new AppError("Invalid email or password", 401);
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError("Invalid email or password", 401);
     }
 
     return { user: { id: user.id, name: user.name, username: user.username, email: user.email, phone: user.phone, balance: user.balance } };
@@ -48,7 +47,7 @@ class UserService {
   static async updateProfile(id, updateData) {
     const existingUser = await User.findById(id);
     if (!existingUser) {
-      throw new AppError('User not found', 404);
+      throw new AppError("User not found", 404);
     }
 
     if (updateData.password) {
@@ -57,15 +56,7 @@ class UserService {
 
     const updatedUser = await User.update(id, updateData);
     if (!updatedUser) {
-      throw new AppError('User not found', 404);
-    }
-
-    // invalidasi cache user berdasarkan email lama dan email terbaru
-    const keysToDelete = new Set();
-    if (existingUser.email) keysToDelete.add(getUserCacheKey(existingUser.email));
-    if (updatedUser.email) keysToDelete.add(getUserCacheKey(updatedUser.email));
-    if (keysToDelete.size > 0) {
-      await redis.del(...Array.from(keysToDelete));
+      throw new AppError("User not found", 404);
     }
 
     return updatedUser;
@@ -78,11 +69,11 @@ class UserService {
   static async getTotalSpent(userId) {
     return User.getTotalSpent(userId);
   }
-  
+
   static async getUserByEmail(email) {
     const user = await User.findByEmail(email);
     if (!user) {
-      throw new AppError('User not found', 404);
+      throw new AppError("User not found", 404);
     }
 
     return {
@@ -95,8 +86,6 @@ class UserService {
       created_at: user.created_at,
     };
   }
-
-
 }
 
 module.exports = UserService;
