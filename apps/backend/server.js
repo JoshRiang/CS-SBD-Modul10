@@ -4,6 +4,8 @@ const db = require('./src/config/database');
 
 const PORT = process.env.PORT || 3000;
 
+module.exports = app;
+
 // Test database connection
 db.query('SELECT NOW()')
   .then(() => {
