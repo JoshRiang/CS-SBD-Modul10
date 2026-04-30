@@ -1,0 +1,7 @@
+{
+  "name": "netlab-store",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ]
+}
