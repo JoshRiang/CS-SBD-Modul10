@@ -25,13 +25,30 @@ export default async function BarangDashboard() {
 
   let userDetail;
   try {
-    userDetail = JSON.parse(userDetailStr.value);
+    const decodedUserString = decodeURIComponent(userDetailStr.value);
+    userDetail = JSON.parse(decodedUserString);
+
+    if (!userDetail.email) {
+      console.error("DEBUG: userDetail tidak memiliki properti email!", userDetail);
+      // redirect("/login"); 
+    }
+
     const response = await axios.get(`https://cs-sbd-modul10-backend.vercel.app/user/${userDetail.email}`, {
       headers: { Authorization: `Bearer ${sessionKey.value}` },
     });
-    if (response.status !== 200) redirect("/login");
-  } catch (err) {
-    redirect("/login");
+
+    if (response.status !== 200) {
+      console.error("DEBUG: Status response bukan 200, melainkan", response.status);
+      redirect("/login");
+    }
+  } catch (err: any) {
+    if (axios.isAxiosError(err)) {
+      console.error("DEBUG AXIOS ERROR:", err.response?.status, err.response?.data);
+    } else {
+      console.error("DEBUG PARSING ERROR:", err.message);
+    }
+
+    // redirect("/login");
   }
 
   // Mengambil data barang
